@@ -1,9 +1,11 @@
 import './App.css';
+import React from 'react';
+import PageBuilder from './PageBuilder';
 
 function App() {
   return (
     <div className="App">
-      <h1>Hi</h1>
+      <PageBuilder />
     </div>
   );
 }
