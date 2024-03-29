@@ -1,33 +1,36 @@
 import React from 'react';
-import { useDrop } from 'react-dnd';
+import { useDrag } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend'; // Optional: Specify backend
 
-const DraggableComponent = ({ type, content, style, onDrop }) => {
-  // Use useDrop hook to handle drop events on the component
-  const [{ isDragging }, drop] = useDrop(() => ({
-    accept: ANY, // Accept any draggable type (can be customized)
-    drop: onDrop, // Custom drop handler function (optional)
+const DraggableComponent = ({ type, ...props }) => {
+  const [{ isDragging }, dragRef] = useDrag(() => ({
+    type,
+    item: () => ({ type }), // Data to be passed on drop
   }));
 
-  const opacity = isDragging ? 0.5 : 1;
-  const cursor = isDragging ? 'grabbing' : 'grab';
-
-  const componentStyle = {
-    position: 'absolute',
-    ...style,
-    opacity,
-    cursor,
+  const handleDrop = (event) => {
+    const monitor = event.dataTransfer || event;
+    // Optional: Calculate delta values for positioning
+    const deltaX = monitor.getClientOffset().x - dragRef.current.getBoundingClientRect().left;
+    const deltaY = monitor.getClientOffset().y - dragRef.current.getBoundingClientRect().top;
+    // Call function in HomePage.jsx to handle dropped component
+    props.onDrop(type, deltaX, deltaY);
   };
 
-  switch (type) {
-    case 'label':
-      return <label style={componentStyle}>{content}</label>;
-    case 'input':
-      return <input type="text" style={componentStyle} value={content} />;
-    case 'button':
-      return <button style={componentStyle}>{content}</button>;
-    default:
-      return null; // Handle unknown types gracefully
-  }
+  return (
+    <div
+      ref={dragRef}
+      className={`draggable-component ${isDragging ? 'dragging' : ''}`}
+      draggable={!isDragging}
+      {...props}
+      onClick={handleDrop} // Attach handleDrop to onClick
+    >
+      {/* Your component content (Label, Input, Button) */}
+      {type === 'Label' && <label>My Label</label>}
+      {type === 'Input' && <input type="text" />}
+      {type === 'Button' && <button>Click Me</button>}
+    </div>
+  );
 };
 
 export default DraggableComponent;
