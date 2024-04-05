@@ -1,24 +1,26 @@
 import React from 'react';
-import { useDrag } from 'react-dnd';
 
-const Sidebar = ({ components, isDropped }) => {
-  const renderComponent = (component) => {
-    const [{ isDragging }, drag] = useDrag(() => ({
-      type: component.type,
-      item: component,
-    }));
-
-    const opacity = isDragging ? 0.5 : 1;
-
-    return (
-      <div key={component.type} ref={drag} draggable={!isDropped(component.type)} style={{ opacity }}>
-        {component.content}
-      </div>
-    );
+const Sidebar = ({ components }) => {
+  const handleDragStart = (event, component) => {
+    event.dataTransfer.setData('text/plain', JSON.stringify(component));
   };
 
+  const renderComponent = (component) => (
+    <div
+      key={component.type}
+      className="d-flex align-items-center justify-content-between p-2 rounded-lg bg-creamish text-black mb-2"
+      draggable
+      onDragStart={(event) => handleDragStart(event, component)}
+    >
+      {component.content}
+    </div>
+  );
+
   return (
-    <div>
+    <div className="sidebar bg-secondary">
+      <h3 className='text-white mb-4 text-start'>
+        BLOCKS
+      </h3>
       {components.map(renderComponent)}
     </div>
   );

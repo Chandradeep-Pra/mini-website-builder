@@ -2,37 +2,35 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 20%;
+  background-color: #f0f0f0;
+  border-left: 1px solid #ccc;
+  padding: 20px;
+  z-index: 2;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.bg-creamish {
+  background-color: white; /* Creamish white color */
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.text-black {
+  color: #000; /* Black color */
 }
 
-.App-link {
-  color: #61dafb;
+/* styles.css */
+
+.dragging {
+  cursor: grabbing; /* Change cursor to grabbing while dragging */
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.drop-zone {
+  cursor: pointer; /* Change cursor to pointer over drop zone */
+  /* Add other styles for successful drop indicator */
 }

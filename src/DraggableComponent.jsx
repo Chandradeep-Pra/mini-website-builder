@@ -1,33 +1,36 @@
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useDrop } from 'react-dnd';
 
 const DraggableComponent = ({ type, content, style, onDrop }) => {
-  // Use useDrop hook to handle drop events on the component
-  const [{ isDragging }, drop] = useDrop(() => ({
-    accept: ANY, // Accept any draggable type (can be customized)
-    drop: onDrop, // Custom drop handler function (optional)
+  const ref = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const [{}, drop] = useDrop(() => ({
+    accept: 'component',
+    drop: (item, monitor) => {
+      onDrop(item, monitor);
+    },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
   }));
 
-  const opacity = isDragging ? 0.5 : 1;
-  const cursor = isDragging ? 'grabbing' : 'grab';
+  useEffect(() => {
+    setIsDragging(isDragging);
+    if (isDragging) {
+      ref.current.style.opacity = 0.5;
+    } else {
+      ref.current.style.opacity = 1;
+    }
+  }, [isDragging]);
 
-  const componentStyle = {
-    position: 'absolute',
-    ...style,
-    opacity,
-    cursor,
-  };
-
-  switch (type) {
-    case 'label':
-      return <label style={componentStyle}>{content}</label>;
-    case 'input':
-      return <input type="text" style={componentStyle} value={content} />;
-    case 'button':
-      return <button style={componentStyle}>{content}</button>;
-    default:
-      return null; // Handle unknown types gracefully
-  }
+  return (
+    <div ref={drop(ref)} style={{ ...style, cursor: 'pointer' }}>
+      <div ref={ref}>
+        {content}
+      </div>
+    </div>
+  );
 };
 
 export default DraggableComponent;

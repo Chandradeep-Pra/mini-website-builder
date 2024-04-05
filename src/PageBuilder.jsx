@@ -1,28 +1,31 @@
 import React, { useState, useMemo } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { Grid } from '@mui/material'; // Material UI Grid for layout (optional)
-
+import { Container, Modal, Button } from 'react-bootstrap';
 import Sidebar from './Sidebar';
 import DraggableComponent from './DraggableComponent';
 
 const PageBuilder = () => {
   const [droppedComponents, setDroppedComponents] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [droppedComponent, setDroppedComponent] = useState(null);
 
-  const handleDrop = (item, monitor) => {
-    const deltaX = monitor.getInitialClientOffset().x - monitor.getClientOffset().x;
-    const deltaY = monitor.getInitialClientOffset().y - monitor.getClientOffset().y;
+  const handleDrop = (event, component) => {
+    event.preventDefault();
+    const { clientX, clientY } = event;
+    setDroppedComponent({ ...component, x: clientX, y: clientY });
+    setShowModal(true);
+  };
 
-    const newComponent = {
-      ...item,
-      x: monitor.getClientOffset().x,
-      y: monitor.getClientOffset().y,
-      style: {
-        transform: `translate(${deltaX}px, ${deltaY}px)`,
-      },
-    };
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setDroppedComponent(null);
+  };
 
-    setDroppedComponents([...droppedComponents, newComponent]);
+  const handleSaveConfiguration = (x, y) => {
+    setDroppedComponent({ ...droppedComponent, x, y });
+    setShowModal(false);
+    setDroppedComponents([...droppedComponents, droppedComponent]);
   };
 
   const isDropped = (type) =>
@@ -36,16 +39,35 @@ const PageBuilder = () => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <Grid container spacing={2}>
-        <Grid item xs={3}>
-          <Sidebar components={components} isDropped={isDropped} />
-        </Grid>
-        <Grid item xs={9} style={{ border: '1px solid #ddd', padding: 20 }}>
-          {droppedComponents.map((component) => (
-            <DraggableComponent key={component.type} type={component.type} content={component.content} style={component.style} />
+      <div className="d-flex flex-column vh-100" style={{ zIndex: 0 }}>
+        <div className="d-flex flex-grow-1  overflow-auto" style={{ backgroundColor: "#72A0C1", zIndex: 1 }}>
+          {droppedComponents.map((component, index) => (
+            <DraggableComponent
+              key={index}
+              type={component.type}
+              content={component.content}
+              style={component.style}
+              onDrop={handleDrop}
+            />
           ))}
-        </Grid>
-      </Grid>
+        </div>
+        <Sidebar components={components} isDropped={isDropped}  />
+      </div>
+      <Modal show={showModal} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Configure Component</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>X Coordinate: {droppedComponent && droppedComponent.x}</p>
+          <p>Y Coordinate: {droppedComponent && droppedComponent.y}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>Close</Button>
+          <Button variant="primary" onClick={() => handleSaveConfiguration(droppedComponent.x, droppedComponent.y)}>
+            Save Changes
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </DndProvider>
   );
 };
