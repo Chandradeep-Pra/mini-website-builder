@@ -34,3 +34,26 @@
   cursor: pointer; /* Change cursor to pointer over drop zone */
   /* Add other styles for successful drop indicator */
 }
+
+.sidebar {
+    position: fixed;
+    right: 0; /* Place it at the right edge */
+    top: 0; /* Place it at the top edge */
+    width: 200px; /* Set your desired width */
+    height: 100vh; /* Set your desired height (full viewport height) */
+    background-color: #f0f0f0; /* Light gray background */
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    padding: 10px; /* Optional background color */  
+}
+
+.sidebar-item {
+  margin-bottom: 5px;
+  cursor: grab; /* Grab cursor on hover for better dragging affordance */
+}
+
+.sidebar-item:hover .sidebar-item-text {
+  background-color: red;
+  font-size: 1.2em; /* Increase font size on hover */
+  cursor: grab; /* Grab cursor on hover for better dragging affordance */
+}

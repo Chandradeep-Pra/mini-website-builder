@@ -16,6 +16,7 @@ const Sidebar = ({ components }) => {
     </div>
   );
 
+const Sidebar = ({ components, onDrop }) => {
   return (
     <div className="sidebar bg-secondary">
       <h3 className='text-white mb-4 text-start'>
