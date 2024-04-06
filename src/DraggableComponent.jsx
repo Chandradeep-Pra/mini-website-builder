@@ -1,36 +1,36 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { useDrop } from 'react-dnd';
+import React from 'react';
+import { useDrag } from 'react-dnd';
 
-const DraggableComponent = ({ type, content, style, onDrop }) => {
-  const ref = useRef(null);
-  const [isDragging, setIsDragging] = useState(false);
-
-  const [{}, drop] = useDrop(() => ({
-    accept: 'component',
-    drop: (item, monitor) => {
-      onDrop(item, monitor);
-    },
+const DraggableComponent = ({ type, content }) => {
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: 'component',
+    item: { type },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
   }));
 
-  useEffect(() => {
-    setIsDragging(isDragging);
-    if (isDragging) {
-      ref.current.style.opacity = 0.5;
-    } else {
-      ref.current.style.opacity = 1;
-    }
-  }, [isDragging]);
-
   return (
-    <div ref={drop(ref)} style={{ ...style, cursor: 'pointer' }}>
-      <div ref={ref}>
-        {content}
-      </div>
+    <div
+      ref={drag}
+      style={{ opacity: isDragging ? 0.5 : 1, cursor: 'pointer' }}
+    >
+      {content}
     </div>
   );
 };
 
-export default DraggableComponent;
+const Sidebar = ({ onDrop }) => {
+  return (
+    <div className="sidebar bg-secondary">
+      <h3 className='text-white mb-4 text-start'>
+        BLOCKS
+      </h3>
+      <DraggableComponent type="label" content="Label" />
+      <DraggableComponent type="input" content="Input" />
+      <DraggableComponent type="button" content="Button" />
+    </div>
+  );
+};
+
+export default Sidebar;
